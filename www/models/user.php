@@ -1,5 +1,5 @@
 <?php
-    include_once(__DIR__ . '/../utils/db.inc.php');
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/utils/db.inc.php');
 
     // maps to table 'users' in DB
 
@@ -25,6 +25,44 @@
             try {
                 $stmt = $dbh->prepare($query);
                 $stmt->execute([':id' => $id]);
+
+                if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    return new User($row['id'], $row['name'], $row['pwhash'], $row['email']);
+                } else {
+                    return NULL;
+                }
+            } catch(PDOException $e) {
+                return $e;
+            }
+        }
+
+        // checks whether user with given name OR mail exists
+        static function exists($name, $email) {
+            $dbh = db_get_conn();
+
+            $query = 'SELECT COUNT(*) as "num" FROM users WHERE name = :name OR email = :email';
+
+            try {
+                $stmt = $dbh->prepare($query);
+                $stmt->execute([':name' => $name, ':email' => $email]);
+
+                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                return intval($row['num']) > 0; // if count > 0 a user exists
+            } catch(PDOException $e) {
+                return $e;
+            }
+        }
+
+        // returns instance of User class, fetches data from DB by name
+        static function get_by_name($name) {
+            $dbh = db_get_conn();
+
+            $query = 'SELECT * FROM users WHERE name = :name';
+
+            try {
+                $stmt = $dbh->prepare($query);
+                $stmt->execute([':name' => $name]);
 
                 if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     return new User($row['id'], $row['name'], $row['pwhash'], $row['email']);
