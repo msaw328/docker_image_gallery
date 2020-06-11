@@ -1,0 +1,19 @@
+version: '3'
+services:
+  web:
+    build: ./docker/web
+    volumes: 
+      - ./www:/var/html/www
+    ports:
+      - "8080:80"
+  php:
+    build: ./docker/php
+    volumes:
+      - ./www:/var/html/www
+  db:
+    image: postgres:alpine
+    volumes:
+      - ./docker/db/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: xddd
