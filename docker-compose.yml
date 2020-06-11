@@ -14,6 +14,7 @@ services:
     image: postgres:alpine
     volumes:
       - ./docker/db/data:/var/lib/postgresql/data
+      - ./init_db:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_USER: admin
-      POSTGRES_PASSWORD: xddd
+      POSTGRES_PASSWORD: admin
