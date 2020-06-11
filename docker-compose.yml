@@ -10,6 +10,7 @@ services:
     build: ./docker/php
     volumes:
       - ./www:/var/html/www
+      - ./images:/var/html/images
   db:
     image: postgres:alpine
     volumes:

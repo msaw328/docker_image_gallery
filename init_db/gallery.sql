@@ -5,10 +5,7 @@ GRANT ALL PRIVILEGES ON DATABASE gallery TO admin;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50)
+    name VARCHAR(50) UNIQUE,
+    pwhash VARCHAR(60),
+    email VARCHAR(50) UNIQUE
 );
-
-INSERT INTO users (name) VALUES ('maciek');
-INSERT INTO users (name) VALUES ('konrad');
-INSERT INTO users (name) VALUES ('mikołaj');
-INSERT INTO users (name) VALUES ('test2');
