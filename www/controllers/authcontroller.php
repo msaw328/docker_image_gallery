@@ -27,7 +27,7 @@
             $db_pwhash = $user->pwhash;
     
             if(password_verify($password, $db_pwhash)) {
-                sess_login($user->id, $user->name, $user->email);
+                sess_login($user->id, $user->name);
                 header('Location: /views/gallery.php');
                 die();
             } else {
@@ -44,25 +44,24 @@
         }
 
         static function register($req, $files) {
-            if(!isset($req['name']) || !isset($req['password']) || !isset($req['email'])) {
+            if(!isset($req['name']) || !isset($req['password'])) {
                 header('Location: /index.php');
                 die();
             }
 
             $name = $req['name'];
             $pw = $req['password'];
-            $email = $req['email'];
 
             sess_logout();
 
-            if(User::exists($name, $email)) {
-                header('Location: /views/register.php?status="Duplicate name/email"');
+            if(User::exists($name)) {
+                header('Location: /views/register.php?status="Duplicate name"');
                 die();
             }
 
             $pwhash = password_hash($pw, PASSWORD_DEFAULT);
 
-            User::insert($name, $pwhash, $email);
+            User::insert($name, $pwhash);
             header('Location: /views/login.php?status="Succesfully registered, log in using your new account');
             die();
         }

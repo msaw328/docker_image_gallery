@@ -36,7 +36,7 @@
             0, 0,                               // dst_x,y
             $src_x, $src_y,                     // src_x,y
             APP_THUMB_WIDTH, APP_THUMB_HEIGHT,  // dst_width,height
-            $w, $h                              // src_width,height
+            $src_width, $src_height             // src_width,height
         );
         
         ob_start();

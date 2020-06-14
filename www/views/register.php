@@ -24,7 +24,6 @@
     <p>Register</p>
     <form method="POST" action="/index.php?controller=auth&action=register">
         <input type="text" name="name" placeholder="Username" />
-        <input type="text" name="email" placeholder="E-mail address" />
         <input type="password" name="password" />
         <input type="submit" value="Register" />
     </form>

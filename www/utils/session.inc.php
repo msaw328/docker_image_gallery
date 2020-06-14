@@ -10,14 +10,12 @@
         $_SESSION['is_logged_in'] = false;
         unset($_SESSION['id']);
         unset($_SESSION['name']);
-        unset($_SESSION['email']);
     }
 
-    function sess_login($id, $name, $email) {
+    function sess_login($id, $name) {
         $_SESSION['is_logged_in'] = true;
         $_SESSION['id'] = $id;
         $_SESSION['name'] = $name;
-        $_SESSION['email'] = $email;
     }
 
 ?>

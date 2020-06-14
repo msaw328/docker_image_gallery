@@ -7,13 +7,11 @@
         public $id;
         public $name;
         public $pwhash;
-        public $email;
 
-        private function __construct($id, $name, $pwhash, $email) {
+        private function __construct($id, $name, $pwhash) {
             $this->id = $id;
             $this->name = $name;
             $this->pwhash = $pwhash;
-            $this->email = $email;
         }
 
         // returns instance of User class, fetches data from DB by id
@@ -36,15 +34,15 @@
             }
         }
 
-        // checks whether user with given name OR mail exists
-        static function exists($name, $email) {
+        // checks whether user with given name
+        static function exists($name) {
             $dbh = db_get_conn();
 
-            $query = 'SELECT COUNT(*) as "num" FROM users WHERE name = :name OR email = :email';
+            $query = 'SELECT COUNT(*) as "num" FROM users WHERE name = :name';
 
             try {
                 $stmt = $dbh->prepare($query);
-                $stmt->execute([':name' => $name, ':email' => $email]);
+                $stmt->execute([':name' => $name]);
 
                 $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -65,7 +63,7 @@
                 $stmt->execute([':name' => $name]);
 
                 if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    return new User($row['id'], $row['name'], $row['pwhash'], $row['email']);
+                    return new User($row['id'], $row['name'], $row['pwhash']);
                 } else {
                     return NULL;
                 }
@@ -75,15 +73,15 @@
         }
 
         // inserts new user into database, returns id of newly created user
-        static function insert($name, $pwhash, $email) {
+        static function insert($name, $pwhash) {
             $dbh = db_get_conn();
 
-            $query = 'INSERT INTO users (name, pwhash, email) VALUES (:name, :pwhash, :email)';
+            $query = 'INSERT INTO users (name, pwhash) VALUES (:name, :pwhash)';
             
             try {
                 $stmt = $dbh->prepare($query);
 
-                $stmt->execute([':name' => $name, ':pwhash' => $pwhash, ':email' => $email]);
+                $stmt->execute([':name' => $name, ':pwhash' => $pwhash]);
 
                 return $dbh->lastInsertId('users_id_seq');
             } catch(PDOException $e) {
