@@ -17,12 +17,14 @@
     </title>
 </head>
 <body>
-    <?php
-        var_dump($_SESSION);
-    ?>
-    <form method="POST" action="/endpoint/auth.php">
-        <input type="hidden" name="action" value="logout" />
+    <form method="POST" action="/index.php?controller=auth&action=logout">
         <input type="submit" value="Logout" />
+    </form>
+    <form method="POST" enctype="multipart/form-data" action="/index.php?controller=image&action=upload">
+        <input type="text" name="title" />
+        <textarea name="descr"></textarea>
+        <input type="file" name="image_file" />
+        <input type="submit" value="Upload" />
     </form>
 </body>
 </html>

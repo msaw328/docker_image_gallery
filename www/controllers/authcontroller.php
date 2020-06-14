@@ -3,7 +3,15 @@
     include_once($_SERVER['DOCUMENT_ROOT'] . '/utils/session.inc.php');
 
     class AuthController {
-        static function login($username, $password) {
+        static function login($req, $files) {
+            if(!isset($req['name']) || !isset($req['password'])) {
+                header('Location: /index.php');
+                die();
+            }
+
+            $username = $req['name'];
+            $password = $req['password'];
+
             $user = User::get_by_name($username);
     
             if(is_null($user)) {
@@ -29,13 +37,22 @@
             }
         }
 
-        static function logout() {
+        static function logout($req, $files) {
             sess_logout();
             header('Location: /views/login.php');
             die();
         }
 
-        static function register($name, $pw, $email) {
+        static function register($req, $files) {
+            if(!isset($req['name']) || !isset($req['password']) || !isset($req['email'])) {
+                header('Location: /index.php');
+                die();
+            }
+
+            $name = $req['name'];
+            $pw = $req['password'];
+            $email = $req['email'];
+
             sess_logout();
 
             if(User::exists($name, $email)) {

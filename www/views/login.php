@@ -1,6 +1,6 @@
 <?php
     session_start();
-    include_once('../utils/session.inc.php');
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/utils/session.inc.php');
 
     if(sess_is_logged_in()) {
         header('Location: /views/gallery.php');
@@ -22,10 +22,9 @@
             echo '<p>Status: ' . htmlspecialchars($_GET['status']) . '</p>';
     ?>
     <p>Login</p>
-    <form method="POST" action="/endpoint/auth.php">
+    <form method="POST" action="/index.php?controller=auth&action=login">
         <input type="text" name="name" placeholder="Username" />
         <input type="password" name="password" />
-        <input type="hidden" name="action" value="login" />
         <input type="submit" value="Login" />
     </form>
     <p>

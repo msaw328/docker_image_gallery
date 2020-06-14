@@ -1,2 +1,3 @@
 docs/*
-docker/db/data
+db_data
+images
