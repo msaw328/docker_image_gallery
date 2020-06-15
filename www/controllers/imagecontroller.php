@@ -1,6 +1,7 @@
 <?php
     include_once($_SERVER['DOCUMENT_ROOT'] . '/models/image.php');
     include_once($_SERVER['DOCUMENT_ROOT'] . '/utils/session.inc.php');
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/utils/config.inc.php');
     include_once($_SERVER['DOCUMENT_ROOT'] . '/utils/thumb.inc.php');
 
     class ImageController {
@@ -11,18 +12,29 @@
             }
 
             if(!isset($req['title']) || !isset($files['image_file'])) {
-                header('Location: /index.php');
+                header('Location: /views/gallery.php?status="Invalid request"');
                 die();
             }
+
+            if(mb_strlen($req['title']) > DB_MAX_IMAGE_TITLE_LEN) {
+                header('Location: /views/gallery.php?status="Title too long"');
+                die();
+            }
+
+            if(isset($req['descr']) && mb_strlen($req['descr']) > DB_MAX_IMAGE_DESCR_LEN) {
+                header('Location: /views/gallery.php?status="Description too long"');
+                die();
+            }
+
             $image_file = $files['image_file'];
 
             if($image_file['error'] !== UPLOAD_ERR_OK) {
-                header('Location: /index.php');
+                header('Location: /views/gallery.php?status="Uplaod failed"');
                 die();
             }
 
             if(!is_uploaded_file($image_file['tmp_name'])) {
-                header('Location: /index.php');
+                header('Location: /views/gallery.php?status="Invalid file access"');
                 die();
             }
 
@@ -30,14 +42,14 @@
 
 
             if($info === FALSE) {
-                header('Location: /index.php');
+                header('Location: /views/gallery.php?status="Invalid file type"');
                 die();
             }
 
             $image_type = $info[2];
 
             if($image_type !== IMAGETYPE_GIF && $image_type !== IMAGETYPE_JPEG && $image_type !== IMAGETYPE_PNG) {
-                header('Location: /index.php');
+                header('Location: /views/gallery.php?status="Invalid image type"');
                 die();
             }
 
@@ -49,7 +61,7 @@
             $thumb = thumb_create($image_file['tmp_name']);
 
             if($contents === FALSE) {
-                header('Location: /index.php');
+                header('Location: /views/gallery.php?status="Could not load contents of the file"');
                 die();
             }
 
@@ -61,7 +73,6 @@
 
         static function allowed_ids($req, $files) {
             if(!sess_is_logged_in()) {
-                header('Location: /index.php');
                 die();
             }
 
@@ -76,12 +87,10 @@
 
         static function fetch_raw($req, $files) {
             if(!sess_is_logged_in()) {
-                header('Location: /index.php');
                 die();
             }
 
             if(!isset($req['id'])) {
-                header('Location: /index.php');
                 die();
             }
 
@@ -96,12 +105,10 @@
 
         static function fetch_thumb_raw($req, $files) {
             if(!sess_is_logged_in()) {
-                header('Location: /index.php');
                 die();
             }
 
             if(!isset($req['id'])) {
-                header('Location: /index.php');
                 die();
             }
 
@@ -113,5 +120,34 @@
             echo $image->thumb;
             die();
         }
+
+        static function fetch_metadata_json($req, $files) {
+            if(!sess_is_logged_in()) {
+                die();
+            }
+
+            if(!isset($req['id'])) {
+                die();
+            }
+            
+            $image = Image::get_by_id($req['id']);
+
+            header('Content-Type: application/json');
+
+            $response = [
+                'id' => $image->id,
+                'author_id' => $image->author_id,
+                'cat_id' => $image->cat_id,
+                'title' => $image->title,
+                'descr' => $image->descr,
+                'created_at' => $image->created_at,
+                'mime' => $image->mime
+            ];
+
+            echo json_encode($response);
+            die();
+        }
+
+        
     }
 ?>

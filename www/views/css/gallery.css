@@ -1,0 +1,42 @@
+.fileDropAreaClear {
+    width: 100%;
+    height: 100px;
+    background-color: lightgray;
+    border: darkblue solid 2px;
+    text-align: center;
+    padding: 20px;
+    box-sizing: border-box;
+    border-radius: 10px;
+
+    transition: 0.6s;
+}
+
+.fileDropAreaDragged {
+    background-color: darkgray;
+}
+
+#imgDescrInput {
+    resize: none;
+}
+
+form {
+    padding-bottom: 2rem;
+    border-bottom: 2px solid lightblue;
+}
+
+form input,textarea,div,select {
+    width: 100%;
+    margin: 1rem auto;
+}
+
+#pictureDiv img {
+    margin: 0;
+    transition: 0.6s;
+    box-sizing: border-box;
+    border: black solid 1px;
+    cursor: pointer;
+}
+
+#pictureDiv img:hover {
+    transform: scale(0.9, 0.9);
+}

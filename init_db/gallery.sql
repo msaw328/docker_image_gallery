@@ -5,14 +5,14 @@ GRANT ALL PRIVILEGES ON DATABASE gallery TO admin;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) UNIQUE,
+    name VARCHAR(32) UNIQUE,
     pwhash TEXT
 );
 
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     owner_id INTEGER REFERENCES users (id),
-    name VARCHAR(50)
+    name VARCHAR(40)
 );
 
 CREATE TABLE images (
@@ -20,9 +20,9 @@ CREATE TABLE images (
     author_id INTEGER REFERENCES users (id) NOT NULL,
     cat_id INTEGER REFERENCES categories (id) ON DELETE SET NULL,
     title VARCHAR(50) NOT NULL,
-    descr TEXT,
+    descr VARCHAR(400),
     created_at TIMESTAMP,
-    mime VARCHAR(15),
+    mime VARCHAR(20),
     contents BYTEA,
     thumb BYTEA
 );

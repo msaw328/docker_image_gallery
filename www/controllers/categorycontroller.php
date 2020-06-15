@@ -1,11 +1,11 @@
 <?php
     include_once($_SERVER['DOCUMENT_ROOT'] . '/models/category.php');
     include_once($_SERVER['DOCUMENT_ROOT'] . '/utils/session.inc.php');
+    include_once($_SERVER['DOCUMENT_ROOT'] . '/utils/config.inc.php');
 
     class CategoryController {
         static function get_owned($req, $files) {
             if(!sess_is_logged_in()) {
-                header('Location: /index.php');
                 die();
             }
 
@@ -20,16 +20,21 @@
 
         static function create($req, $files) {
             if(!sess_is_logged_in()) {
-                header('Location: /index.php');
+                header('Location: /views/login.php');
                 die();
             }
 
             if(!isset($req['name'])) {
-                header('Location: /index.php');
+                header('Location: /viws/gallery.php?status="Invalid request"');
                 die();
             }
 
             $owner_id = $_SESSION['id'];
+
+            if(mb_strlen($req['name']) > DB_MAX_CAT_NAME_LEN) {
+                header('Location: /viws/gallery.php?status="Category name too long"');
+                die();
+            }
 
             Category::insert($owner_id, $req['name']);
 
@@ -44,7 +49,7 @@
             }
 
             if(!isset($req['id'])) {
-                header('Location: /index.php');
+                header('Location: /viws/gallery.php?status="Invalid request"');
                 die();
             }
 
