@@ -1,0 +1,69 @@
+0. Kontenery vs. Wirtualne maszyny
+
+Kontenery są rozwiązaniem bardziej kompaktowym niż maszyny wirtualne, ponieważ używają tego samego
+kernela co host system, podczas gdy VMki posiadają własne, wirtualizowane kernele. Działają na podstawie
+izolacji zasobów takich jak drzewa procesów, katalogi itp. Docker jest jednym z najbardziej popularnych
+narzędzi do zarządzania kontenerami, a docker-compose - do łączenia ich ze sobą w grupy i spójne aplikacje
+oparte o wiele pomniejszych usług.
+
+1. Uruchomienie
+
+Aby uruchomić galerię potrzebny jest zainstalowany docker oraz docker-compose.
+
+Gdy obydwa narzędzia są zainstalowane wystarczy, będąc w tym samym katalogu co plik docker-compose.yml,
+wykonać komendę 'docker-compose up'. Pierwsze uruchomienie może długo zająć, gdyż komenda musi pobrać
+obrazy z docker hub oraz zbudować ich zmodyfikowane wersje.
+
+Po zbudowaniu wystartują 3 kontenery (web, php oraz db) a ich logi zostaną wyprowadzone na standardowe wyjście 
+uruchomionego terminala. Aby zatrzymać działanie aplikacji należy użyć kombinacji klawiszy Ctrl+C
+w zajętym przez aplikację terminalu (kontener db nie zatrzyma się jeżeli są otwarte połączenia do bazy danych)
+
+2. Kontenery
+
+Aplikacja składa się z 3 kontenerów:
+
+web - kontener z uruchomionym serwerem WWW oraz Reverse Proxy NGINX. Jest to oficjalny obraz NGINX z docker hub,
+ze zmienioną konfiguracją (plik docker/web/default.conf jest kopiowany do katalogu konfiguracyjnego NGINX wewnątrz)
+
+php - kontener z uruchomionym PHP-FPM w wersji 7. Jest to oficjalny obraz PHP-FPM z doinstalowanym modułem PDO postgres
+oraz GD do obróbki obrazów.
+
+db - kontener z uruchomioną relacyjną bazą danych Postgres. Jest to oficjalny obraz Postgres z docker hub, bez modyfikacji.
+
+Nazwy uruchomionych kontenerów są generowane na podstawie usługi zdefiniowanej w docker-compose.yml (web/php/db) ale również
+katalogu, w którym uruchamiana jest komenda 'docker-compose up'. Dla przykładu, jeżeli uruchomimy aplikację znajdująć się w
+katalogu 'galeria_www' to można spodziewać się że kontenery zostaną nazwane 'galeria_www_web_1', 'galeria_www_php_1' oraz
+'galeria_www_db_1' lub podobnie. Dokładne nazwy kontenerów można poznać używając komendy 'docker container list' i wyszukująć je na liście.
+
+3. Katalogi
+
+docker - zawiera pliki potrzebne do zbudowania obrazów kontenerów przez dockera
+db_data - katalog tworzony przez dockera, zamontowany w kontenerze db, zawiera w sobie pliki bazy danych
+init_db - zawiera skrypt gallery.sql tworzący strukturę bazy danych, uruchamia się jeżeli db_data nie istnieje lub jest pusty,
+w przeciwnym razie skrypty z init_db są ignorowane
+www - webcontent, pliki php js css html itp.
+
+plik docker-compose.yml opisuje usługi oraz jak je zbudować/z jakiego obrazu je uruchomić, jakie porty forwardować, jakie katalogi
+zamontować w kontenerach i gdzie itp.
+
+4. Działanie
+
+Przy pisaniu aplikacji starałem się użyć modelu MVC (Model View Controller), co jest odzwierciedlone w strukturze katalogu 'www',
+aczkolwiek kod nadal jest troche nieuporządkowany, zwłaszcza jeśli chodzi o "views".
+
+Po uruchomieniu aplikacji kontener db sprawdza czy db_data istnieje i czy jest pusty, jeżeli tak to znaczy że nie ma bazy danych i trzeba
+ją utworzyć od nowa. Uruchamia w tym celu plik init_db/gallery.sql który tworzy bazę danych gallery wraz z jej tabelami.
+
+Kontener web został skonfigurowany tak, aby zabronić dostępu do lokalizacji z których pliki będą includowane, oraz żeby wszystkie pliki .php
+wysyłać najpierw do kontenera php, w kßórym usługa PHP-FPM zinterpretuje je. Poza tym normalnie serwuje webcontent js, css itp.
+
+Punktem wejściowym dla większości (w prawdziwym MVC byłby dla wszystkich) wywołań jest index.php, który bierze co najmniej 2 argumenty URLowe,
+controller oraz action. Na podstawie zasad routingu opisanych w index.php za pomocą funkcji route() (zdefiniwanej w utils/router.inc.php)
+przekazuje on requesty do odpowiednich kontrolerów, lub w ostateczności, odsyła do jednego z domyślnych widoków.
+
+Pierwszą stroną z którą trzeba się zapoznać jest strona logowania, zawiera ona prosty formularz logowania, oraz odnośnik do strony rejestracji.
+Po rejestracji zostaniemy poproszeni o zalogowanie się do nowo utworzonego konta, po czym zostaniemy przeniesieni na stronę galerii. Tam można
+dodawać zdjęcia oraz dodawać i usuwać kategorie. Po dodaniu paru zdjęć możemy klikająć na nie przejśc na strone edycji metadanych zdjęcia, gdzie
+można mu również przypisać kategorię albo je usunąć. Każdy użytkownik jest w stanie wyświetlać zdjęcia wszystkich, ale modyfikować może tylko dane
+swoich zdjęć, oraz nie widzi kategorii innych użytkowników.
+
