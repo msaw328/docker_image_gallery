@@ -6,6 +6,8 @@
     include_once($_SERVER['DOCUMENT_ROOT'] . '/controllers/imagecontroller.php');
     include_once($_SERVER['DOCUMENT_ROOT'] . '/controllers/categorycontroller.php');
 
+    // index.php - routing logic, most calls go here and are routed
+    // based on route() calls below as well as given controller/action names
 
     // routes: request method - controller - action - callback(req, files)
     route('POST', 'auth', 'login', 'AuthController::login');
@@ -13,10 +15,10 @@
     route('POST', 'auth', 'logout', 'AuthController::logout');
 
     route('POST', 'image', 'upload', 'ImageController::upload');
+    route('POST', 'image', 'alter_meta', 'ImageController::alter_meta');
     route('GET', 'image', 'fetch_raw', 'ImageController::fetch_raw');
     route('GET', 'image', 'fetch_thumb_raw', 'ImageController::fetch_thumb_raw');
     route('GET', 'image', 'allowed_ids', 'ImageController::allowed_ids');
-    route('GET', 'image', 'fetch_metadata', 'ImageController::fetch_metadata_json');
 
     route('GET', 'category', 'get_owned', 'CategoryController::get_owned');
     route('POST', 'category', 'create', 'CategoryController::create');

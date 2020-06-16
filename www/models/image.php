@@ -6,6 +6,7 @@
     class Image {
         public $id;
         public $author_id;
+        public $cat_id;
         public $title;
         public $descr;
         public $created_at;
@@ -13,9 +14,10 @@
         public $contents;
         public $thumb;
 
-        private function __construct($id, $author_id, $title, $descr, $created_at, $mime, $contents, $thumb) {
+        private function __construct($id, $author_id, $cat_id, $title, $descr, $created_at, $mime, $contents, $thumb) {
             $this->id = $id;
             $this->author_id = $author_id;
+            $this->cat_id = $cat_id;
             $this->title = $title;
             $this->descr = $descr;
             $this->created_at = $created_at;
@@ -71,13 +73,45 @@
 
                     return new Image(
                         $row['id'], 
-                        $row['author_id'], 
+                        $row['author_id'],
+                        $row['cat_id'],
                         $row['title'], 
                         $row['descr'],
                         $row['created_at'],
                         $row['mime'],
                         $actual_contents,
                         $actual_thumb
+                    );
+                } else {
+                    return NULL;
+                }            
+            } catch(PDOEXception $e) {
+                return $e;
+            }
+        }
+
+        // return just metadata
+        static function get_metadata_by_id($id) {
+            $dbh = db_get_conn();
+
+            $query = 'SELECT id, author_id, cat_id, title, descr, created_at FROM images WHERE id = :id';
+            
+            try {
+                $stmt = $dbh->prepare($query);
+
+                $stmt->execute([':id' => $id]);
+
+                if($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    return new Image(
+                        $row['id'], 
+                        $row['author_id'], 
+                        $row['cat_id'], 
+                        $row['title'], 
+                        $row['descr'],
+                        $row['created_at'],
+                        NULL,
+                        NULL,
+                        NULL
                     );
                 } else {
                     return NULL;
@@ -107,6 +141,27 @@
                 }
 
                 return $results;
+            } catch(PDOException $e) {
+                return $e;
+            }
+        }
+
+        static function update_metadata($id, $title, $descr, $cat_id) {
+            $dbh = db_get_conn();
+
+            $query = 'UPDATE images SET title = :title, descr = :descr, cat_id = :cat_id WHERE id = :id';
+
+            try {
+                $stmt = $dbh->prepare($query);
+
+                $stmt->execute([
+                    ':id' => $id,
+                    ':title' => $title,
+                    ':descr' => $descr,
+                    ':cat_id' => $cat_id
+                ]);
+
+                return true;
             } catch(PDOException $e) {
                 return $e;
             }

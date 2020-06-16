@@ -51,7 +51,7 @@
                     <textarea id="imgDescrInput" maxlength="<?php echo DB_MAX_IMAGE_DESCR_LEN ?>" name="descr"></textarea>
                     <input id="imgFileInput" type="file" name="image_file" accept="image/jpeg,image/gif,image/png" />
                     <div id="fileDropArea" class="fileDropAreaClear">
-                        ..or drop a file here!
+                        ...or drop a file here!
                     </div>
                     <input type="submit" value="Upload" class="button-primary" />
                 </form>
@@ -59,7 +59,7 @@
             <div class="three columns">
                 <form id="categoryAddForm" method="POST" action="/index.php?controller=category&action=create">
                     <label for="addCategoryName">
-                        Category name:
+                        Category name (to add):
                     </label>
                     <input id="addCategoryName" type="text" name="name" />
                     <input type="submit" value="Add new category" class="button-primary" />
@@ -68,7 +68,7 @@
             <div class="three columns">
                 <form id="categoryDelForm" method="POST" action="/index.php?controller=category&action=delete">
                     <label for="deleteCategorySelect">
-                        Category name:
+                        Category name (to delete):
                     </label>
                     <select id="deleteCategorySelect" name="id">
                         <option value="none">no selection</option>
@@ -77,11 +77,9 @@
                 </form>
             </div>
         </div>
-        <div class="row">
-            <div class="twelve columns">
-                <div id="pictureDiv">
-                </div>
-            </div>
+    </div>
+    <div class="container">
+        <div id="pictureDiv">
         </div>
     </div>
 </body>

@@ -12,6 +12,13 @@
 
                     img.dataset.id = id
                     img.src = '/index.php?controller=image&action=fetch_thumb_raw&id=' + id
+                    img.onclick = (e) => {
+                        var img_nested = e.target
+
+                        var id_nested = img_nested.dataset.id
+
+                        document.location = '/views/edit.php?id=' + id_nested
+                    }
 
                     container.appendChild(img)
                 }

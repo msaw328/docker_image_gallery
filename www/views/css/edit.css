@@ -1,0 +1,13 @@
+#imagePreview {
+    border: 2px solid black;
+    width: 100%;
+}
+
+form input,textarea,div,select {
+    width: 100%;
+    margin: 1rem auto;
+}
+
+textarea {
+    resize: none;
+}

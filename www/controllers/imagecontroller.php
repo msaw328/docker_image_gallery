@@ -121,33 +121,48 @@
             die();
         }
 
-        static function fetch_metadata_json($req, $files) {
+        static function alter_meta($req, $files) {
             if(!sess_is_logged_in()) {
+                header('Location: /views/login.php?status=Must be logged in to view');
                 die();
             }
 
-            if(!isset($req['id'])) {
+            if(!isset($req['id']) || !is_numeric($req['id'])) {
+                header('Location: /views/gallery.php?status=Invalid request');
                 die();
             }
-            
-            $image = Image::get_by_id($req['id']);
 
-            header('Content-Type: application/json');
+            if(!isset($req['title']) || !isset($req['descr']) || !isset($req['cat_id'])) {
+                header('Location: /views/gallery.php?status=Invalid request');
+                die();
+            }
 
-            $response = [
-                'id' => $image->id,
-                'author_id' => $image->author_id,
-                'cat_id' => $image->cat_id,
-                'title' => $image->title,
-                'descr' => $image->descr,
-                'created_at' => $image->created_at,
-                'mime' => $image->mime
-            ];
+            $image = Image::get_metadata_by_id($req['id']);
 
-            echo json_encode($response);
+            if(is_null($image)) {
+                header('Location: /views/gallery.php?status=Image not found');
+                die();
+            }
+
+            if(is_a($image, 'Exception')) {
+                header('Location: /views/gallery.php?status=DB error');
+                die();
+            }
+
+            if($_SESSION['id'] !== $image->author_id) {
+                header('Location: /views/gallery.php?status=You cant edit this picture');
+                die();
+            }
+
+            $res = Image::update_metadata($req['id'], $req['title'], $req['descr'], $req['cat_id']);
+
+            if(is_a($res, 'Exception')) {
+                header('Location: /views/gallery.php?status=DB error');
+                die();
+            }
+
+            header('Location: /views/edit.php?id=' . $req['id']);
             die();
         }
-
-        
     }
 ?>
