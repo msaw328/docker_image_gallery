@@ -166,5 +166,24 @@
                 return $e;
             }
         }
+
+        // deletes images with a given id
+        static function delete($id) {
+            $dbh = db_get_conn();
+
+            $query = 'DELETE FROM images WHERE id = :id';
+
+            try {
+                $stmt = $dbh->prepare($query);
+
+                $stmt->execute([
+                    ':id' => $id
+                ]);
+
+                return true;
+            } catch(PDOException $e) {
+                return $e;
+            }
+        }
     }
 ?>

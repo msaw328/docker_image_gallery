@@ -103,6 +103,9 @@
                     </label>
                     <input type="submit" value="<?php if($is_user_owner) echo "Edit"; else echo "You can't edit this picture"; ?>" <?php if($is_user_owner) echo 'class="button-primary"'; else echo 'disabled' ?>/>
                 </form>
+                <form method="POST" action="/index.php?controller=image&action=delete&id=<?php echo $img_id; ?>">
+                    <input id="deleteImageButton" type="submit" value="<?php if($is_user_owner) echo "Delete"; else echo "You can't delete this picture"; ?>" <?php if($is_user_owner) echo 'class="button-primary"'; else echo 'disabled' ?>/>
+                </form>
             </div>
         </div>
     </div>

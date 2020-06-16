@@ -16,6 +16,7 @@
 
     route('POST', 'image', 'upload', 'ImageController::upload');
     route('POST', 'image', 'alter_meta', 'ImageController::alter_meta');
+    route('POST', 'image', 'delete', 'ImageController::delete');
     route('GET', 'image', 'fetch_raw', 'ImageController::fetch_raw');
     route('GET', 'image', 'fetch_thumb_raw', 'ImageController::fetch_thumb_raw');
     route('GET', 'image', 'allowed_ids', 'ImageController::allowed_ids');

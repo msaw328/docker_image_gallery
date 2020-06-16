@@ -11,3 +11,13 @@ form input,textarea,div,select {
 textarea {
     resize: none;
 }
+
+form {
+    padding-bottom: 2rem;
+    border-bottom: 2px solid lightblue;
+}
+
+#deleteImageButton {
+    background-color: lightcoral;
+    border-color: red;
+}

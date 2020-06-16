@@ -1,4 +1,8 @@
 <?php
+    // by allocating dbh as a static variable we make sure
+    // function returns the same object of db connection
+    // every time, so we dont open multiple connections to
+    // db for no reason
     function db_get_conn() {
         static $dbh = NULL;
 
